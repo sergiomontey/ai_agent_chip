@@ -212,48 +212,7 @@ class BusinessProcessAutomation:
                         'right_value': True
                     }
                 },
-                {
-                    'type': 'api_call',
-                    'config': {
-                        'integration_id': 'sendgrid_integration',
-                        'endpoint_id': 'send_welcome_email',
-                        'body_data': {
-                            'to': '${event.customer_email}',
-                            'template_id': 'welcome_template',
-                            'dynamic_template_data': {
-                                'customer_name': '${event.customer_name}',
-                                'stripe_customer_id': '${steps[0].data.id}'
-                            }
-                        }
-                    }
-                },
-                {
-                    'type': 'delay',
-                    'config': {'seconds': 300}  # 5 minute delay
-                },
-                {
-                    'type': 'api_call',
-                    'config': {
-                        'integration_id': 'slack_integration',
-                        'endpoint_id': 'send_notification',
-                        'body_data': {
-                            'text': f"🎉 New customer onboarded: ${event.customer_name}",
-                            'channel': '#sales'
-                        }
-                    }
-                }
-            ],
-            error_handling={
-                'strategy': 'retry',
-                'retry_count': 3,
-                'notification': {
-                    'on_failure': True,
-                    'webhook_url': 'https://alerts.company.com/webhook'
-                }
-            }
-        )
-        
-        return workflow_id
+         
 ```
 
 ### Intelligent Data Transformation
@@ -310,66 +269,7 @@ class DataTransformationPipeline:
         
         return transform_id
     
-    def create_bi_data_pipeline(self):
-        """Create business intelligence data pipeline"""
-        
-        pipeline_workflow = self.chip.create_automation_workflow(
-            name="Daily BI Data Pipeline",
-            description="Extract, transform, load data for business intelligence",
-            trigger=AutomationTrigger.TIME_BASED,
-            trigger_config={'schedule': '0 1 * * *'},  # Daily at 1 AM
-            steps=[
-                # Extract data from multiple sources
-                {
-                    'type': 'api_call',
-                    'config': {
-                        'integration_id': 'salesforce_integration',
-                        'endpoint_id': 'query_opportunities',
-                        'parameters': {
-                            'q': "SELECT Id, Name, Amount, CloseDate, StageName FROM Opportunity WHERE LastModifiedDate = YESTERDAY"
-                        }
-                    }
-                },
-                {
-                    'type': 'api_call', 
-                    'config': {
-                        'integration_id': 'stripe_integration',
-                        'endpoint_id': 'list_charges',
-                        'parameters': {
-                            'created': {'gte': '${yesterday_timestamp}'}
-                        }
-                    }
-                },
-                # Transform data to common format
-                {
-                    'type': 'data_transformation',
-                    'config': {
-                        'transformation_id': 'salesforce_to_standard',
-                        'input_data': '${steps[0].data}'
-                    }
-                },
-                {
-                    'type': 'data_transformation',
-                    'config': {
-                        'transformation_id': 'stripe_to_standard', 
-                        'input_data': '${steps[1].data}'
-                    }
-                },
-                # Load into data warehouse
-                {
-                    'type': 'api_call',
-                    'config': {
-                        'integration_id': 'bigquery_integration',
-                        'endpoint_id': 'insert_rows',
-                        'body_data': {
-                            'rows': '${steps[2].data + steps[3].data}'
-                        }
-                    }
-                }
-            ]
-        )
-        
-        return pipeline_workflow
+  
 ```
 
 ### Real-Time System Monitoring
@@ -616,27 +516,7 @@ class EnterpriseIntegration:
                         }
                     }
                 },
-                # Transform Salesforce data to HubSpot format
-                {
-                    'type': 'data_transformation', 
-                    'config': {
-                        'transformation_id': 'salesforce_to_hubspot_transform',
-                        'input_data': '${previous_step.data.records}'
-                    }
-                },
-                # Update HubSpot contacts
-                {
-                    'type': 'api_call',
-                    'config': {
-                        'integration_id': hubspot_id,
-                        'endpoint_id': 'batch_update_contacts',
-                        'body_data': '${previous_step.data}'
-                    }
-                }
-            ]
-        )
-        
-        return [salesforce_id, hubspot_id, sync_workflow]
+              
 ```
 
 ### E-commerce Platform Integration

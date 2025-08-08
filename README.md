@@ -853,14 +853,6 @@ For integration consulting: integrations@monteycodes.com
 For enterprise licensing: enterprise@monteycodes.com
 ```
 
-## 🔧 Support & Community
-
-- **Documentation**: Complete integration guides at [docs.chip-agent.io](https://docs.chip-agent.io)
-- **GitHub Issues**: Bug reports and integration requests
-- **Discord Community**: Real-time support and architecture discussions
-- **Integration Forum**: Best practices and pattern sharing
-- **Enterprise Support**: enterprise@monteycodes.com
-- **Consulting Services**: integrations@monteycodes.com
 
 ## 🔮 Roadmap
 
